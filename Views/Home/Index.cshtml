@@ -1,8 +1,151 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model KurumsalGiderTakipSistemi.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Ana Sayfa / Özet";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Karşılama Kartı -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body p-4">
+                <h4 class="text-white mb-1">Hoş Geldiniz, @User.Identity?.Name 👋</h4>
+                <p class="mb-0 opacity-75">Kurumsal harcama ve masraf yönetim panelindesiniz.</p>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Çalışan Özet Kartları -->
+<div class="row">
+    <div class="col-lg-4 col-md-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="d-block fw-semibold text-muted">Toplam Masrafım</span>
+                    <span class="badge bg-label-primary rounded-pill p-2"><i class="bx bx-wallet fs-5"></i></span>
+                </div>
+                <h3 class="card-title mb-1 text-primary">@Model.ToplamHarcamaTutari.ToString("C2")</h3>
+                <small class="text-muted">Onaylanan: <strong>@Model.OnaylananTutar.ToString("C2")</strong></small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="d-block fw-semibold text-muted">Onay Bekleyen Masraflarım</span>
+                    <span class="badge bg-label-warning rounded-pill p-2"><i class="bx bx-time-five fs-5"></i></span>
+                </div>
+                <h3 class="card-title mb-1 text-warning">@Model.BekleyenHarcamaSayisi Adet</h3>
+                <small class="text-muted">İnceleme sürecinde</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-12 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="d-block fw-semibold text-muted">Sonuçlanan Talepler</span>
+                    <span class="badge bg-label-success rounded-pill p-2"><i class="bx bx-check-circle fs-5"></i></span>
+                </div>
+                <h3 class="card-title mb-1 text-success">@Model.OnaylananHarcamaSayisi <span class="fs-6 text-muted">Onay</span> / <span class="text-danger">@Model.ReddedilenHarcamaSayisi Red</span></h3>
+                <small class="text-muted">Geçmiş kayıt toplamı</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Yönetici ve Admin Özel İstatistikleri -->
+@if (User.IsInRole("Yonetici") || User.IsInRole("Admin"))
+{
+    <div class="divider my-4">
+        <div class="divider-text fw-bold text-uppercase">Şirket Geneli Yönetim Özeti</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card border border-warning">
+                <div class="card-body text-center">
+                    <i class="bx bx-bell fs-1 text-warning mb-2"></i>
+                    <h5 class="card-title">Onay Bekleyen Şirket Harcaması</h5>
+                    <h2 class="text-warning fw-bold mb-0">@Model.SirketBekleyenOnaySayisi</h2>
+                    <a href="/Yonetici/OnayListesi" class="btn btn-sm btn-outline-warning mt-3">İncele & Onayla</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border border-success">
+                <div class="card-body text-center">
+                    <i class="bx bx-credit-card fs-1 text-success mb-2"></i>
+                    <h5 class="card-title">Toplam Onaylanan Masraf</h5>
+                    <h2 class="text-success fw-bold mb-0">@Model.SirketToplamHarcama.ToString("C2")</h2>
+                    <span class="badge bg-label-success mt-3">Şirket Bütçesinden Ödenen</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border border-info">
+                <div class="card-body text-center">
+                    <i class="bx bx-group fs-1 text-info mb-2"></i>
+                    <h5 class="card-title">Kayıtlı Çalışan Sayısı</h5>
+                    <h2 class="text-info fw-bold mb-0">@Model.ToplamCalisanSayisi</h2>
+                    <span class="badge bg-label-info mt-3">Aktif Kullanıcı</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Son Eklenen Harcamalar Tablosu -->
+    <div class="card mt-2">
+        <h5 class="card-header">Son Gönderilen 5 Harcama Talebi</h5>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Çalışan</th>
+                        <th>Kategori</th>
+                        <th>Tutar</th>
+                        <th>Tarih</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.SonHarcamalar.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-3 text-muted">Henüz sisteme girilmiş harcama yok.</td>
+                        </tr>
+                    }
+                    @foreach (var h in Model.SonHarcamalar)
+                    {
+                        <tr>
+                            <td><strong>@(h.Kullanici?.TamAd ?? "Bilinmiyor")</strong></td>
+                            <td>@(h.HarcamaKategori?.Ad ?? "Genel")</td>
+                            <td><span class="fw-bold">@h.Tutar.ToString("C2")</span></td>
+                            <td>@h.OlusturulmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>
+                                @if (h.Status == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Pending)
+                                {
+                                    <span class="badge bg-warning">Bekliyor</span>
+                                }
+                                else if (h.Status == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Approved)
+                                {
+                                    <span class="badge bg-success">Onaylandı</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Reddedildi</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

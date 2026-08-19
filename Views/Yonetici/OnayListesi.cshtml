@@ -1,0 +1,97 @@
+﻿@model IEnumerable<KurumsalGiderTakipSistemi.Models.Harcama>
+
+@{
+    ViewData["Title"] = "Onay Bekleyen Harcamalar";
+}
+
+<h4 class="fw-bold py-3 mb-4">Onay Bekleyen Harcama Talepleri</h4>
+
+<div class="card">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Çalışan</th>
+                    <th>Tarih</th>
+                    <th>Kategori</th>
+                    <th>Tutar</th>
+                    <th>Açıklama</th>
+                    <th>Fiş / Belge</th>
+                    <th class="text-center">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="bx bx-check-double fs-3 d-block text-success mb-1"></i>
+                            Şu an onay bekleyen herhangi bir harcama talebi yok.
+                        </td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@(item.Kullanici?.TamAd ?? "Bilinmeyen Kullanıcı")</strong></td>
+                        <td>@item.HarcamaTarihi.ToString("dd.MM.yyyy")</td>
+                        <td><span class="badge bg-label-info">@(item.HarcamaKategori?.Ad ?? "Genel")</span></td>
+                        <td><span class="fw-bold text-primary">@item.Tutar.ToString("C2")</span></td>
+                        <td>@item.Aciklama</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.FisYolu))
+                            {
+                                <a href="@item.FisYolu" target="_blank" class="btn btn-xs btn-outline-secondary">
+                                    <i class="bx bx-file"></i> Fişi Gör
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Fiş Yok</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                <form asp-action="Onayla" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bx bx-check"></i> Onayla
+                                    </button>
+                                </form>
+
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#redModal-@item.Id">
+                                    <i class="bx bx-x"></i> Reddet
+                                </button>
+                            </div>
+
+                            <div class="modal fade" id="redModal-@item.Id" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form asp-action="Reddet" method="post">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Harcama Talebini Reddet</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                            </div>
+                                            <div class="modal-body text-start">
+                                                <p><strong>@item.Tutar.ToString("C2")</strong> tutarındaki harcamayı reddetmek üzeresiniz.</p>
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <div class="mb-3">
+                                                    <label class="form-label">Reddetme Nedeni:</label>
+                                                    <textarea name="redNedeni" class="form-control" rows="3" placeholder="Örn: Fiş tutarı ile uyuşmuyor." required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">İptal</button>
+                                                <button type="submit" class="btn btn-danger">Reddi Onayla</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

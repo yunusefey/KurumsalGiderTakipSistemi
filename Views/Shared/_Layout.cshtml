@@ -1,50 +1,186 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="tr" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="~/assets/" data-template="vertical-menu-template-free">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - KurumsalGiderTakipSistemi</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/KurumsalGiderTakipSistemi.styles.css" asp-append-version="true" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>@ViewData["Title"] - Kurumsal Gider Takip</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="~/assets/img/favicon/favicon.ico" />
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="~/assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="~/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="~/assets/css/demo.css" />
+    <link rel="stylesheet" href="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <!-- Helpers -->
+    <script src="~/assets/vendor/js/helpers.js"></script>
+    <script src="~/assets/js/config.js"></script>
 </head>
+
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">KurumsalGiderTakipSistemi</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            
+            <!-- Yan Menü (Sidebar) -->
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo">
+                    <a href="/" class="app-brand-link">
+                        <span class="app-brand-text demo menu-text fw-bolder ms-2 text-capitalize">Gider Takip</span>
+                    </a>
+                </div>
+
+                <div class="menu-inner-shadow"></div>
+
+                <ul class="menu-inner py-1">
+                    <!-- 1. Çalışan Menüleri (Herkes Erişebilir) -->
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Çalışan İşlemleri</span></li>
+                    <li class="menu-item">
+                        <a href="/" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div>Ana Sayfa / Özet</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/Harcama/Index" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-receipt"></i>
+                            <div>Harcamalarım</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/Harcama/Ekle" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-plus-circle"></i>
+                            <div>Yeni Harcama Ekle</div>
+                        </a>
+                    </li>
+
+                    <!-- 2. Yönetici ve Admin Ortak Menüleri -->
+                    @if (User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("Yonetici") || User.IsInRole("Admin")))
+                    {
+                        <li class="menu-header small text-uppercase"><span class="menu-header-text">Yönetim Paneli</span></li>
+                        <li class="menu-item">
+                            <a href="/Yonetici/OnayListesi" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-check-shield"></i>
+                                <div>Onay Bekleyenler</div>
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="menu-item">
+                            <a href="/Rapor/Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
+                                <div>Raporlar & Analiz</div>
+                            </a>
                         </li>
-                    </ul>
+                        <li class="menu-item">
+                            <a href="/Kategori/Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-category"></i>
+                                <div>Kategoriler & Limitler</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/Departman/Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-buildings"></i>
+                                <div>Departmanlar</div>
+                            </a>
+                        </li>
+                    }
+
+                    <!-- 3. Sistem Admin Özel Menüsü -->
+                    @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <li class="menu-header small text-uppercase"><span class="menu-header-text">Sistem Yönetimi</span></li>
+                        <li class="menu-item">
+                            <a href="/Kullanici/Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-user-pin"></i>
+                                <div>Kullanıcı & Rol Yönetimi</div>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </aside>
+
+            <!-- Ana Düzen Kapsayıcısı -->
+            <div class="layout-page">
+                
+                <!-- Üst Çubuk (Navbar) -->
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                            <i class="bx bx-menu bx-sm"></i>
+                        </a>
+                    </div>
+                    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                        <span class="fw-semibold">Kurumsal Harcama & Masraf Yönetimi</span>
+                        
+                        <ul class="navbar-nav flex-row align-items-center ms-auto">
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item me-3 text-end">
+                                    <span class="fw-semibold d-block">@User.Identity.Name</span>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <small class="badge bg-danger">Sistem Admin</small>
+                                    }
+                                    else if (User.IsInRole("Yonetici"))
+                                    {
+                                        <small class="badge bg-warning">Yönetici</small>
+                                    }
+                                    else
+                                    {
+                                        <small class="badge bg-info">Çalışan</small>
+                                    }
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/Hesap/Cikis" class="btn btn-sm btn-outline-danger" title="Oturumu Kapat">
+                                        <i class="bx bx-power-off me-1"></i> Çıkış
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a href="/Hesap/Giris" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-log-in me-1"></i> Giriş Yap
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- Sayfa İçeriği -->
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        @RenderBody()
+                    </div>
+                    
+                    <!-- Alt Bilgi (Footer) -->
+                    <footer class="content-footer footer bg-footer-theme">
+                        <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                            <div class="mb-2 mb-md-0">
+                                © @DateTime.Now.Year Kurumsal Gider Takip Sistemi
+                            </div>
+                        </div>
+                    </footer>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - KurumsalGiderTakipSistemi - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Core Scripts -->
+    <script src="~/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="~/assets/vendor/libs/popper/popper.js"></script>
+    <script src="~/assets/vendor/js/bootstrap.js"></script>
+    <script src="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="~/assets/vendor/js/menu.js"></script>
+    <script src="~/assets/js/main.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

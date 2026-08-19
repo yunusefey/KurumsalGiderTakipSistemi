@@ -1,0 +1,60 @@
+﻿@model KurumsalGiderTakipSistemi.Models.Harcama
+
+@{
+    ViewData["Title"] = "Yeni Harcama Ekle";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        
+        @if (ViewBag.Hata != null)
+        {
+            <div class="alert alert-danger alert-dismissible mb-4" role="alert">
+                <i class="bx bx-error-circle me-2"></i>
+                <strong>Harcama Limiti Uyarısı:</strong> @ViewBag.Hata
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Yeni Harcama Kaydı Oluştur</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Ekle" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Harcama Kategorisi</label>
+                        <select asp-for="HarcamaKategoriId" asp-items="ViewBag.Kategoriler" class="form-select" required>
+                            <option value="">-- Kategori Seçiniz --</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Harcama Tutarı (TL)</label>
+                        <input asp-for="Tutar" type="number" step="0.01" class="form-control" placeholder="0.00" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Harcama Tarihi</label>
+                        <input asp-for="HarcamaTarihi" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Açıklama / Masraf Nedeni</label>
+                        <textarea asp-for="Aciklama" class="form-control" rows="3" placeholder="Örn: Şehirlerarası otobüs bileti..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="fisDosyasi">Fiş / Fatura Görseli (JPG, PNG, PDF)</label>
+                        <input class="form-control" type="file" id="fisDosyasi" name="fisDosyasi" accept="image/*,application/pdf" />
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="/Harcama/Index" class="btn btn-outline-secondary">Geri Dön</a>
+                        <button type="submit" class="btn btn-primary">Harcamayı Gönder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

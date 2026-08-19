@@ -1,0 +1,130 @@
+﻿@model KurumsalGiderTakipSistemi.Models.RaporFiltreViewModel
+
+@{
+    ViewData["Title"] = "Gelişmiş Harcama Raporları";
+}
+
+<!-- Filtreleme Kartı -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bx bx-filter-alt me-2"></i>Harcama Filtreleme & Arama</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" asp-action="Index">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Başlangıç Tarihi</label>
+                    <input type="date" name="baslangicTarihi" value="@(Model.BaslangicTarihi?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Bitiş Tarihi</label>
+                    <input type="date" name="bitisTarihi" value="@(Model.BitisTarihi?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Departman</label>
+                    <select name="departmanId" asp-items="ViewBag.Departmanlar" class="form-select">
+                        <option value="">-- Tümü --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Kategori</label>
+                    <select name="kategoriId" asp-items="ViewBag.Kategoriler" class="form-select">
+                        <option value="">-- Tümü --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Durum</label>
+                    <select name="durum" class="form-select">
+                        <option value="">-- Tümü --</option>
+                        <option value="1" selected="@(Model.Durum == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Pending)">Onay Bekliyor</option>
+                        <option value="2" selected="@(Model.Durum == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Approved)">Onaylandı</option>
+                        <option value="3" selected="@(Model.Durum == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Rejected)">Reddedildi</option>
+                    </select>
+                </div>
+
+                <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+                    <div>
+                        <a href="/Rapor/Index" class="btn btn-outline-secondary me-2">
+                            <i class="bx bx-reset me-1"></i> Filtreyi Sıfırla
+                        </a>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-search me-1"></i> Raporu Getir
+                        </button>
+                        <a href="/Rapor/ExcelIndir?baslangicTarihi=@(Model.BaslangicTarihi?.ToString("yyyy-MM-dd"))&bitisTarihi=@(Model.BitisTarihi?.ToString("yyyy-MM-dd"))&departmanId=@Model.DepartmanId&kategoriId=@Model.KategoriId&durum=@((int?)Model.Durum)" class="btn btn-success">
+                            <i class="bx bx-download me-1"></i> Excel Olarak İndir
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Özet Sonuç Bandı -->
+<div class="alert alert-primary d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <i class="bx bx-info-circle me-2"></i>
+        Filtreye uyan toplam <strong>@Model.Harcamalar.Count adet</strong> kayıt bulundu.
+    </div>
+    <div>
+        Toplam Harcama Tutarı: <span class="fs-5 fw-bold text-primary">@Model.ToplamTutar.ToString("C2")</span>
+    </div>
+</div>
+
+<!-- Rapor Tablosu -->
+<div class="card">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Çalışan</th>
+                    <th>Departman</th>
+                    <th>Kategori</th>
+                    <th>Tarih</th>
+                    <th>Tutar</th>
+                    <th>Durum</th>
+                    <th>Açıklama</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Harcamalar.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">Belirtilen kriterlere uygun harcama kaydı bulunamadı.</td>
+                    </tr>
+                }
+                @foreach (var item in Model.Harcamalar)
+                {
+                    <tr>
+                        <td><strong>@(item.Kullanici?.TamAd ?? "Bilinmiyor")</strong></td>
+                        <td><span class="badge bg-label-secondary">@(item.Kullanici?.Departman?.Ad ?? "-")</span></td>
+                        <td>@(item.HarcamaKategori?.Ad ?? "Genel")</td>
+                        <td>@item.HarcamaTarihi.ToString("dd.MM.yyyy")</td>
+                        <td><span class="fw-bold text-primary">@item.Tutar.ToString("C2")</span></td>
+                        <td>
+                            @if (item.Status == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Pending)
+                            {
+                                <span class="badge bg-warning">Bekliyor</span>
+                            }
+                            else if (item.Status == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Approved)
+                            {
+                                <span class="badge bg-success">Onaylandı</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger" title="@item.RedNedeni">Reddedildi</span>
+                            }
+                        </td>
+                        <td>@item.Aciklama</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

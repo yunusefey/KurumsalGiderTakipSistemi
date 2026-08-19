@@ -1,0 +1,55 @@
+﻿@{
+    Layout = null; // Menüsüz bağımsız giriş sayfası
+}
+
+<!DOCTYPE html>
+<html lang="tr" class="light-style customizer-hide" dir="ltr" data-theme="theme-default">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giriş Yap - Kurumsal Gider Takip</title>
+    <link rel="stylesheet" href="~/assets/vendor/css/core.css" />
+    <link rel="stylesheet" href="~/assets/vendor/css/theme-default.css" />
+    <link rel="stylesheet" href="~/assets/css/demo.css" />
+    <link rel="stylesheet" href="~/assets/vendor/css/pages/page-auth.css" />
+</head>
+<body>
+    <div class="container-xxl">
+        <div class="authentication-wrapper authentication-basic container-p-y">
+            <div class="authentication-inner">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="mb-2 text-center">Gider Takip Sistemi 💼</h4>
+                        <p class="mb-4 text-center text-muted">Lütfen kurumsal hesabınızla giriş yapın</p>
+
+                        @if (ViewBag.Hata != null)
+                        {
+                            <div class="alert alert-danger">@ViewBag.Hata</div>
+                        }
+
+                        <form asp-action="Giris" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">E-Posta Adresi</label>
+                                <input type="email" class="form-control" name="email" placeholder="ornek@sirket.com" required autofocus />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Şifre</label>
+                                <input type="password" class="form-control" name="sifre" placeholder="············" required />
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-primary d-grid w-100" type="submit">Giriş Yap</button>
+                            </div>
+                        </form>
+
+                        <div class="bg-light p-3 rounded mt-3">
+                            <small class="fw-bold d-block mb-1 text-primary">Test Hesapları:</small>
+                            <small class="d-block"><strong>Çalışan:</strong> calisan@sirket.com / 123456</small>
+                            <small class="d-block"><strong>Yönetici:</strong> yonetici@sirket.com / 123456</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

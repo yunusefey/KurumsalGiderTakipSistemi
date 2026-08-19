@@ -1,0 +1,120 @@
+﻿@model IEnumerable<KurumsalGiderTakipSistemi.Models.Kullanici>
+
+@{
+    ViewData["Title"] = "Kullanıcı ve Rol Yönetimi";
+}
+
+@if (TempData["Hata"] != null)
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        @TempData["Hata"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Basari"] != null)
+{
+    <div class="alert alert-success alert-dismissible" role="alert">
+        @TempData["Basari"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <!-- Sol Taraf: Yeni Kullanıcı Oluşturma Formu -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Yeni Kullanıcı Tanımla</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Ekle" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Ad Soyad</label>
+                        <input type="text" name="TamAd" class="form-control" placeholder="Örn: Ayşe Kaya" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">E-Posta Adresi</label>
+                        <input type="email" name="Email" class="form-control" placeholder="ayse@sirket.com" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Şifre</label>
+                        <input type="password" name="Sifre" class="form-control" placeholder="············" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Rol / Yetki Seviyesi</label>
+                        <select name="Role" class="form-select" required>
+                            <option value="1">Çalışan</option>
+                            <option value="2">Yönetici (Müdür / Finans)</option>
+                            <option value="3">Sistem Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Departman</label>
+                        <select name="DepartmanId" asp-items="ViewBag.Departmanlar" class="form-select">
+                            <option value="">-- Departman Seçiniz --</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Kullanıcıyı Kaydet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sağ Taraf: Sistemdeki Tüm Kullanıcılar Listesi -->
+    <div class="col-md-8">
+        <div class="card">
+            <h5 class="card-header">Sistem Kullanıcıları</h5>
+            <div class="table-responsive text-nowrap">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Kullanıcı</th>
+                            <th>E-Posta</th>
+                            <th>Departman</th>
+                            <th>Rol</th>
+                            <th class="text-center">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td><strong>@user.TamAd</strong></td>
+                                <td>@user.Email</td>
+                                <td>@(user.Departman?.Ad ?? "Belirtilmedi")</td>
+                                <td>
+                                    @if (user.Role == KurumsalGiderTakipSistemi.Models.UserRole.Admin)
+                                    {
+                                        <span class="badge bg-danger">Sistem Admin</span>
+                                    }
+                                    else if (user.Role == KurumsalGiderTakipSistemi.Models.UserRole.Yonetici)
+                                    {
+                                        <span class="badge bg-warning">Yönetici</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info">Çalışan</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <form asp-action="Sil" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@user.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('@user.TamAd adlı kullanıcıyı silmek istediğinize emin misiniz?');">
+                                            <i class="bx bx-trash"></i> Sil
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

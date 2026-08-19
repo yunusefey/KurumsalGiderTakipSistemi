@@ -1,0 +1,72 @@
+﻿@model IEnumerable<KurumsalGiderTakipSistemi.Models.Harcama>
+
+@{
+    ViewData["Title"] = "Harcamalarım";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold py-3 mb-0">Harcamalarım</h4>
+    <a href="/Harcama/Ekle" class="btn btn-primary">
+        <i class="bx bx-plus me-1"></i> Yeni Harcama Ekle
+    </a>
+</div>
+
+<div class="card">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Kategori</th>
+                    <th>Açıklama</th>
+                    <th>Tutar</th>
+                    <th>Fiş / Belge</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">Henüz kayıtlı bir harcamanız bulunmuyor.</td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.HarcamaTarihi.ToString("dd.MM.yyyy")</td>
+                        <td><strong>@(item.HarcamaKategori?.Ad ?? "Genel")</strong></td>
+                        <td>@item.Aciklama</td>
+                        <td><span class="badge bg-label-primary fs-6">@item.Tutar.ToString("C2")</span></td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.FisYolu))
+                            {
+                                <a href="@item.FisYolu" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bx bx-file me-1"></i> Görüntüle
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Fiş Yok</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Status == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Pending)
+                            {
+                                <span class="badge bg-warning">Onay Bekliyor</span>
+                            }
+                            else if (item.Status == KurumsalGiderTakipSistemi.Models.ExpenseStatus.Approved)
+                            {
+                                <span class="badge bg-success">Onaylandı</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger" title="@item.RedNedeni">Reddedildi</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
