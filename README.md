@@ -36,17 +36,5 @@ Modern işletmeler için geliştirilmiş; çalışanların harcama taleplerini f
 
 ---
 
-## 📸 Ekran Görüntüleri
 
-*(Ekran görüntülerinizi bu alana ekleyebilirsiniz)*
 
----
-
-## 🚀 Kurulum ve Çalıştırma
-
-Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
-
-### 1. Projeyi Klonlayın
-```bash
-git clone [https://github.com/kullaniciadi/KurumsalGiderTakipSistemi.git](https://github.com/kullaniciadi/KurumsalGiderTakipSistemi.git)
-cd KurumsalGiderTakipSistemi
